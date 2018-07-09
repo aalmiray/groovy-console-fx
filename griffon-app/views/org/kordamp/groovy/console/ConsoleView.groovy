@@ -5,6 +5,7 @@ import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
+import javafx.scene.control.ContentDisplay
 import javafx.scene.control.MenuBar
 import javafx.scene.control.ToolBar
 import javafx.scene.layout.Priority
@@ -144,27 +145,27 @@ class ConsoleView extends AbstractJavaFXGriffonView {
 
     private ToolBar buildToolBar() {
         builder.toolBar(orientation: Orientation.HORIZONTAL) {
-            button(newFileAction, text: '')
-            button(openAction, text: '')
-            button(saveAction, text: '')
+            button(newFileAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(openAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(saveAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
             separator(orientation: Orientation.VERTICAL)
-            button(undoAction, text: '')
-            button(redoAction, text: '')
+            button(undoAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(redoAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
             separator(orientation: Orientation.VERTICAL)
-            button(cutAction, text: '')
-            button(copyAction, text: '')
-            button(pasteAction, text: '')
+            button(cutAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(copyAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(pasteAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
             separator(orientation: Orientation.VERTICAL)
-            button(findAction, text: '')
-            button(replaceAction, text: '')
+            button(findAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(replaceAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
             separator(orientation: Orientation.VERTICAL)
-            button(historyPrevAction, text: '')
-            button(historyNextAction, text: '')
+            button(historyPrevAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(historyNextAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
             separator(orientation: Orientation.VERTICAL)
-            button(runAction, text: '')
-            button(interruptAction, text: '')
+            button(runAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
+            button(interruptAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
             separator(orientation: Orientation.VERTICAL)
-            button(clearOutputAction, text: '')
+            button(clearOutputAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)
         }
     }
 }
