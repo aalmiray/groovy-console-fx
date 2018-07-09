@@ -49,9 +49,11 @@ class ConsoleView extends AbstractJavaFXGriffonView {
                     }
                     bottom {
                         anchorPane {
-                            label(id: 'statusMessage', hgrow: Priority.ALWAYS, leftAnchor: 5, topAnchor: 5, text:'Welcome to Groovy Console')
+                            label(id: 'statusMessage', hgrow: Priority.ALWAYS, leftAnchor: 5, topAnchor: 5,
+                                text: bind(model.statusMessageProperty()))
                             separator(orientation: Orientation.VERTICAL, rightAnchor: 105, topAnchor: 5)
-                            label(id: 'colRow', hgrow: Priority.NEVER, prefWidth: 100, rightAnchor: 5, topAnchor: 5, text:'1:1', alignment: Pos.CENTER_RIGHT)
+                            label(id: 'colRow', hgrow: Priority.NEVER, prefWidth: 100, rightAnchor: 5, topAnchor: 5,
+                                text: bind(model.colRowProperty()), alignment: Pos.CENTER_RIGHT)
                         }
                     }
                 }
