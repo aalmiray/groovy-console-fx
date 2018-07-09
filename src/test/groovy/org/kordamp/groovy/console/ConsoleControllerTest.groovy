@@ -3,6 +3,7 @@ package org.kordamp.groovy.console
 import griffon.core.artifact.ArtifactManager
 import griffon.core.test.GriffonUnitRule
 import griffon.core.test.TestFor
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,6 +27,7 @@ class ConsoleControllerTest {
     @Rule
     public final GriffonUnitRule griffon = new GriffonUnitRule()
 
+    @Ignore
     @Test
     void executeClickAction() {
         // given:
