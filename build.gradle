@@ -1,0 +1,112 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.codehaus.griffon:gradle-griffon-plugin:2.15.0'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+        classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.2'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
+        classpath 'net.nemerosa:versioning:2.6.1'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'org.codehaus.griffon.griffon'
+apply plugin: 'net.nemerosa.versioning'
+
+Date buildTimeAndDate = new Date()
+ext {
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+    macosx = System.getProperty('os.name').contains('Mac OS')
+}
+
+griffon {
+    disableDependencyResolution = false
+    includeGroovyDependencies = true
+    version = '2.15.0'
+    toolkit = 'javafx'
+    applicationProperties = [
+        'build_date'    : buildDate,
+        'build_time'    : buildTime,
+        'build_revision': versioning.info.commit
+    ]
+}
+
+mainClassName = 'org.kordamp.groovy.console.Launcher'
+
+apply from: 'gradle/publishing.gradle'
+apply from: 'gradle/code-coverage.gradle'
+apply from: 'gradle/code-quality.gradle'
+apply from: 'gradle/javafx-plugin.gradle'
+apply from: 'gradle/docs.gradle'
+apply plugin: 'org.kordamp.gradle.stats'
+apply plugin: 'com.github.ben-manes.versions'
+
+jfx {
+    mainClass         = mainClassName
+    allPermissions    = true
+    keyStoreAlias     = 'example-user'
+    keyStorePassword  = 'example-password'
+    jfxMainAppJarName = jar.archiveName
+    appName           = project.name
+    vendor            = project.name
+}
+
+dependencies {
+    compile "org.codehaus.griffon:griffon-guice:${griffon.version}"
+    compile "org.kordamp.ikonli:ikonli-javafx:$ikonliVersion"
+    compile "org.kordamp.ikonli:ikonli-materialdesign-pack:$ikonliVersion"
+
+    runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
+
+    testCompile "org.codehaus.griffon:griffon-javafx-test:${griffon.version}"
+    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile('org.awaitility:awaitility-groovy:3.1.0') {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+
+    compile("org.fxmisc.richtext:richtextfx:$richtextfxVersion") {
+        exclude group: 'org.reactfx', module: 'reactfx'
+    }
+    compile("org.fxmisc.undo:undofx:$undofxVersion") {
+        exclude group: 'org.reactfx', module: 'reactfx'
+    }
+    compile "org.fxmisc.flowless:flowless:$flowlessVersion"
+    compile "org.fxmisc.wellbehaved:wellbehavedfx:$wellbehavedfxVersion"
+}
+
+task sourceJar(type: Jar) {
+    group 'Build'
+    description 'An archive of the source code'
+    classifier 'sources'
+    from sourceSets.main.allSource
+}
+
+tasks.withType(JavaCompile) {
+    sourceCompatibility = project.sourceCompatibility
+    targetCompatibility = project.targetCompatibility
+}
+
+tasks.withType(GroovyCompile) {
+    sourceCompatibility = project.sourceCompatibility
+    targetCompatibility = project.targetCompatibility
+}
+
+import java.text.SimpleDateFormat
+
+startScripts {
+    doLast {
+        if (!macosx) unixScript.text = unixScript.text.replaceAll('"(-Xdock:(name|icon)=)([^"]*?)(")', ' ')
+        windowsScript.text = windowsScript.text.replaceAll('"(-Xdock:(name|icon)=)([^"]*?)(")', ' ')
+    }
+}
+
+if (hasProperty('debugRun') && ((project.debugRun as boolean))) {
+    run {
+        jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
+    }
+}

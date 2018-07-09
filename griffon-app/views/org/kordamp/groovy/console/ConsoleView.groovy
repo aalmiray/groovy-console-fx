@@ -1,0 +1,170 @@
+package org.kordamp.groovy.console
+
+import griffon.core.artifact.GriffonView
+import griffon.inject.MVCMember
+import griffon.metadata.ArtifactProviderFor
+import javafx.geometry.Orientation
+import javafx.geometry.Pos
+import javafx.scene.control.MenuBar
+import javafx.scene.control.ToolBar
+import javafx.scene.layout.Priority
+import org.codehaus.griffon.runtime.javafx.artifact.AbstractJavaFXGriffonView
+
+import javax.annotation.Nonnull
+import javax.inject.Inject
+
+@ArtifactProviderFor(GriffonView)
+class ConsoleView extends AbstractJavaFXGriffonView {
+    @MVCMember @Nonnull
+    private FactoryBuilderSupport builder
+
+    @MVCMember @Nonnull
+    private ConsoleController controller
+
+    @MVCMember @Nonnull
+    private ConsoleModel model
+
+    @Inject
+    private CodeEditor codeEditor
+
+    void initUI() {
+        MenuBar theMenuBar = buildMenuBar()
+        ToolBar theToolBar = buildToolBar()
+        builder.application(title: application.configuration['application.title'],
+            sizeToScene: true, centerOnScreen: true, name: 'mainWindow') {
+            scene(fill: WHITE, width: 800, height: 600, stylesheets: '/org/kordamp/groovy/console/console.css') {
+                b = borderPane() {
+                    top {
+                        vbox {
+                            node(theMenuBar)
+                            node(theToolBar)
+                        }
+                    }
+                    center {
+                        splitPane(dividerPositions: [0.5], orientation: Orientation.VERTICAL) {
+                            node(codeEditor)
+                            textArea(stylesheets: 'output-area', editable: false)
+                        }
+                    }
+                    bottom {
+                        anchorPane {
+                            label(id: 'statusMessage', hgrow: Priority.ALWAYS, leftAnchor: 5, topAnchor: 5, text:'Welcome to Groovy Console')
+                            separator(orientation: Orientation.VERTICAL, rightAnchor: 105, topAnchor: 5)
+                            label(id: 'colRow', hgrow: Priority.NEVER, prefWidth: 100, rightAnchor: 5, topAnchor: 5, text:'1:1', alignment: Pos.CENTER_RIGHT)
+                        }
+                    }
+                }
+
+                connectActions(b, controller)
+                connectMessageSource(b)
+            }
+        }
+    }
+
+    private MenuBar buildMenuBar() {
+        builder.menuBar {
+            menu(msg('org.kordamp.groovy.console.ConsoleView.menu.File.label')) {
+                menuItem(newFileAction)
+                menuItem(newWindowAction)
+                menuItem(openAction)
+                separatorMenuItem()
+                menuItem(saveAction)
+                menuItem(saveAsAction)
+                separatorMenuItem()
+                menuItem(printAction)
+                separatorMenuItem()
+                menuItem(quitAction)
+            }
+
+            menu(msg('org.kordamp.groovy.console.ConsoleView.menu.Edit.label')) {
+                menuItem(undoAction)
+                menuItem(redoAction)
+                separatorMenuItem()
+                menuItem(cutAction)
+                menuItem(copyAction)
+                menuItem(pasteAction)
+                separatorMenuItem()
+                menuItem(findAction)
+                menuItem(findNextAction)
+                menuItem(findPreviousAction)
+                menuItem(replaceAction)
+                separatorMenuItem()
+                menuItem(selectAllAction)
+                separatorMenuItem()
+                menuItem(commentAction)
+                menuItem(selectBlockAction)
+            }
+
+            menu(msg('org.kordamp.groovy.console.ConsoleView.menu.View.label')) {
+                menuItem(clearOutputAction)
+                separatorMenuItem()
+                menuItem(largerFontAction)
+                menuItem(smallerFontAction)
+                separatorMenuItem()
+                checkMenuItem(captureStdOutAction)
+                checkMenuItem(captureStdErrAction)
+                checkMenuItem(fullStackTracesAction)
+                checkMenuItem(showScriptInOutputAction)
+                checkMenuItem(visualizeScriptResultsAction)
+                checkMenuItem(showToolbarAction)
+                checkMenuItem(detachedOutputAction)
+                checkMenuItem(autoClearOutputAction)
+            }
+
+            menu(msg('org.kordamp.groovy.console.ConsoleView.menu.History.label')) {
+                menuItem(historyPrevAction)
+                menuItem(historyNextAction)
+            }
+
+            menu(msg('org.kordamp.groovy.console.ConsoleView.menu.Script.label')) {
+                menuItem(runAction)
+                checkMenuItem(saveOnRunAction)
+                menuItem(runSelectionAction)
+                checkMenuItem(threadInterruptAction)
+                menuItem(interruptAction)
+                menuItem(compileAction)
+                separatorMenuItem()
+                menuItem(addClasspathJarAction)
+                menuItem(addClasspathDirAction)
+                menuItem(showClasspathAction)
+                menuItem(clearClassloaderAction)
+                separatorMenuItem()
+                menuItem(inspectLastAction)
+                menuItem(inspectVariablesAction)
+                menuItem(inspectAstAction)
+                menuItem(inspectTokensAction)
+            }
+
+            menu(msg('org.kordamp.groovy.console.ConsoleView.menu.Help.label')) {
+                menuItem(aboutAction)
+                menuItem(preferencesAction)
+            }
+        }
+    }
+
+    private ToolBar buildToolBar() {
+        builder.toolBar(orientation: Orientation.HORIZONTAL) {
+            button(newFileAction, text: '')
+            button(openAction, text: '')
+            button(saveAction, text: '')
+            separator(orientation: Orientation.VERTICAL)
+            button(undoAction, text: '')
+            button(redoAction, text: '')
+            separator(orientation: Orientation.VERTICAL)
+            button(cutAction, text: '')
+            button(copyAction, text: '')
+            button(pasteAction, text: '')
+            separator(orientation: Orientation.VERTICAL)
+            button(findAction, text: '')
+            button(replaceAction, text: '')
+            separator(orientation: Orientation.VERTICAL)
+            button(historyPrevAction, text: '')
+            button(historyNextAction, text: '')
+            separator(orientation: Orientation.VERTICAL)
+            button(runAction, text: '')
+            button(interruptAction, text: '')
+            separator(orientation: Orientation.VERTICAL)
+            button(clearOutputAction, text: '')
+        }
+    }
+}
