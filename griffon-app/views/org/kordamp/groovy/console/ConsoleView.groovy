@@ -1,8 +1,10 @@
 package org.kordamp.groovy.console
 
+import de.codecentric.centerdevice.MenuToolkit
 import griffon.core.artifact.GriffonView
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
+import griffon.util.GriffonApplicationUtils
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.control.ContentDisplay
@@ -31,13 +33,20 @@ class ConsoleView extends AbstractJavaFXGriffonView {
     void initUI() {
         MenuBar theMenuBar = buildMenuBar()
         ToolBar theToolBar = buildToolBar()
+
+        if (GriffonApplicationUtils.isMacOSX) {
+            MenuToolkit tk = MenuToolkit.toolkit()
+            theMenuBar.getMenus().add(0, tk.createDefaultApplicationMenu(application.configuration['application.title']))
+            tk.setGlobalMenuBar(theMenuBar)
+        }
+
         builder.application(title: application.configuration['application.title'],
             sizeToScene: true, centerOnScreen: true, name: 'mainWindow') {
             scene(fill: WHITE, width: 800, height: 600, stylesheets: '/org/kordamp/groovy/console/console.css') {
                 b = borderPane() {
                     top {
                         vbox {
-                            node(theMenuBar)
+                            if (!GriffonApplicationUtils.isMacOSX) node(theMenuBar)
                             node(theToolBar)
                         }
                     }
@@ -64,6 +73,7 @@ class ConsoleView extends AbstractJavaFXGriffonView {
         }
     }
 
+    @Nonnull
     private MenuBar buildMenuBar() {
         builder.menuBar {
             menu(msg('org.kordamp.groovy.console.ConsoleView.menu.File.label')) {
@@ -145,6 +155,7 @@ class ConsoleView extends AbstractJavaFXGriffonView {
         }
     }
 
+    @Nonnull
     private ToolBar buildToolBar() {
         builder.toolBar(orientation: Orientation.HORIZONTAL) {
             button(newFileAction, contentDisplay: ContentDisplay.GRAPHIC_ONLY)

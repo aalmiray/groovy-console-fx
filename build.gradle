@@ -7,8 +7,8 @@ buildscript {
         classpath 'org.codehaus.griffon:gradle-griffon-plugin:2.15.0'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.2'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-        classpath 'net.nemerosa:versioning:2.6.1'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
+        classpath 'net.nemerosa:versioning:2.7.1'
     }
 }
 
@@ -77,6 +77,7 @@ dependencies {
     }
     compile "org.fxmisc.flowless:flowless:$flowlessVersion"
     compile "org.fxmisc.wellbehaved:wellbehavedfx:$wellbehavedfxVersion"
+    compile "de.codecentric.centerdevice:centerdevice-nsmenufx:$nsmenufxVersion"
 }
 
 task sourceJar(type: Jar) {
