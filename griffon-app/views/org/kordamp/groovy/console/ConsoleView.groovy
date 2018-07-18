@@ -85,8 +85,10 @@ class ConsoleView extends AbstractJavaFXGriffonView {
                 menuItem(saveAsAction)
                 separatorMenuItem()
                 menuItem(printAction)
-                separatorMenuItem()
-                menuItem(quitAction)
+                if (!GriffonApplicationUtils.isMacOSX) {
+                    separatorMenuItem()
+                    menuItem(quitAction)
+                }
             }
 
             menu(msg('org.kordamp.groovy.console.ConsoleView.menu.Edit.label')) {
