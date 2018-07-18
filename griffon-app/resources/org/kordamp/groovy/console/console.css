@@ -1,3 +1,7 @@
+.root {
+    -fx-background-color: white;
+}
+
 .code-editor, .output-area {
     font-family: "Monospaced";
     -fx-font-size: 24px;

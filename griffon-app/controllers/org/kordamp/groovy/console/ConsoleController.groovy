@@ -54,7 +54,12 @@ class ConsoleController extends AbstractGriffonController {
     void paste() {}
 
     @ControllerAction
-    void find() {}
+    void find() {
+        if (application.mvcGroupManager.findTypedGroup('finder') == null) {
+            createMVCGroup(FinderMVCGroup)
+        }
+        application.windowManager.show('finder')
+    }
 
     @ControllerAction
     void findNext() {}

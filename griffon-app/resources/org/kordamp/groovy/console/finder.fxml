@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import griffon.javafx.scene.layout.MigLayoutPane?>
+<?import griffon.javafx.support.JavaFXUtils?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<MigLayoutPane fx:controller="org.kordamp.groovy.console.FinderView"
+               xmlns:fx="http://javafx.com/fxml"
+               minWidth="800" prefWidth="800"
+               layout="fillx"
+               styleClass="finder-container">
+    <Label MigLayoutPane.cc="w p!, right, gapx 5"
+           styleClass="finder-label finder-find-label"
+           text="%org.kordamp.groovy.console.FinderView.find.label"/>
+    <ComboBox MigLayoutPane.cc="wmin 500, left, grow, push, wrap"
+              styleClass="finder-combobox finder-find-combobox"
+              editable="true"
+              fx:id="finder_findComboBox"/>
+
+    <Label MigLayoutPane.cc="w p!, right, gapx 5"
+           styleClass="finder-label finder-replace-label"
+           text="%org.kordamp.groovy.console.FinderView.replace.label"/>
+    <ComboBox MigLayoutPane.cc="wmin 500, left, grow, push, wrap"
+              styleClass="finder-combobox finder-replace-combobox"
+              editable="true"
+              fx:id="finder_replaceComboBox"/>
+
+    <MigLayoutPane MigLayoutPane.cc="span 2, right, grow, wrap"
+                   layout="insets 0">
+        <Label MigLayoutPane.cc="left, width 120:120:"
+               styleClass="finder-label finder-matches-label"
+               fx:id="finder_matchesLabel"/>
+        <CheckBox MigLayoutPane.cc="right"
+                  fx:id="finder_regexCheckBox"
+                  styleClass="finder-checkbox finder-regex-checkbox"
+                  text="%org.kordamp.groovy.console.FinderView.regex.label"/>
+        <CheckBox MigLayoutPane.cc="right"
+                  fx:id="finder_matchCaseCheckBox"
+                  styleClass="finder-checkbox finder-matchcase-checkbox"
+                  text="%org.kordamp.groovy.console.FinderView.matchcase.label"/>
+        <CheckBox MigLayoutPane.cc="right, gap"
+                  fx:id="finder_wrapAroundCheckBox"
+                  styleClass="finder-checkbox finder-wraparound-checkbox"
+                  text="%org.kordamp.groovy.console.FinderView.wraparound.label"/>
+    </MigLayoutPane>
+
+    <MigLayoutPane MigLayoutPane.cc="span 2, grow"
+                   layout="insets 0">
+        <Button MigLayoutPane.cc="left"
+                styleClass="finder-button finder-replaceall-button"
+                JavaFXUtils.griffonActionId="replaceAll"/>
+        <Button MigLayoutPane.cc="left"
+                styleClass="finder-button finder-replace-button"
+                JavaFXUtils.griffonActionId="replace"/>
+        <Button MigLayoutPane.cc="left, push, gap"
+                styleClass="finder-button finder-replaceandfind-button"
+                JavaFXUtils.griffonActionId="replaceAndFind"/>
+        <Button MigLayoutPane.cc="right"
+                styleClass="finder-button finder-findprevious-button"
+                JavaFXUtils.griffonActionId="findPrevious"/>
+        <Button MigLayoutPane.cc="right"
+                styleClass="finder-button finder-findnext-button"
+                JavaFXUtils.griffonActionId="findNext"/>
+    </MigLayoutPane>
+</MigLayoutPane>

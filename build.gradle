@@ -26,7 +26,7 @@ ext {
 griffon {
     disableDependencyResolution = false
     includeGroovyDependencies = true
-    version = '2.15.0'
+    version = griffonVersion
     toolkit = 'javafx'
     applicationProperties = [
         'build_date'    : buildDate,
@@ -56,18 +56,14 @@ jfx {
 }
 
 dependencies {
-    compile "org.codehaus.griffon:griffon-guice:${griffon.version}"
+    griffon "org.codehaus.griffon.plugins:griffon-miglayout-plugin:$miglayoutPluginVersion"
+
+    compile "org.codehaus.griffon:griffon-guice:$griffonVersion"
+
+    compile "com.miglayout:miglayout-javafx:$miglayoutVersion"
+    compile "org.kordamp.bootstrapfx:bootstrapfx-core:$bootstrapfxVersion"
     compile "org.kordamp.ikonli:ikonli-javafx:$ikonliVersion"
     compile "org.kordamp.ikonli:ikonli-materialdesign-pack:$ikonliVersion"
-
-    runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
-
-    testCompile "org.codehaus.griffon:griffon-javafx-test:${griffon.version}"
-    testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    testCompile "org.spockframework:spock-core:${spockVersion}"
-    testCompile('org.awaitility:awaitility-groovy:3.1.0') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-    }
 
     compile("org.fxmisc.richtext:richtextfx:$richtextfxVersion") {
         exclude group: 'org.reactfx', module: 'reactfx'
@@ -78,7 +74,21 @@ dependencies {
     compile "org.fxmisc.flowless:flowless:$flowlessVersion"
     compile "org.fxmisc.wellbehaved:wellbehavedfx:$wellbehavedfxVersion"
     compile "de.codecentric.centerdevice:centerdevice-nsmenufx:$nsmenufxVersion"
+
+    runtime "org.slf4j:slf4j-simple:$slf4jVersion"
+
+    testCompile "org.codehaus.griffon:griffon-javafx-test:$griffonVersion"
+    testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testCompile "org.spockframework:spock-core:$spockVersion"
+    testCompile("org.awaitility:awaitility-groovy:$awaitilityVersion") {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
 }
+
+sourceSets.main.groovy.srcDirs += ['griffon-app/mvcs']
+tasks.findByName('stats').paths += [
+    mvc: [name: 'MVCs', path: 'griffon-app/mvcs']
+]
 
 task sourceJar(type: Jar) {
     group 'Build'
