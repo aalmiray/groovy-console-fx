@@ -1,49 +1,102 @@
-buildscript {
-    repositories {
-        jcenter()
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2018-2019 Andres Almiray.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+plugins {
+    id 'groovy'
+    id 'org.kordamp.gradle.project'          version '0.23.0'
+    //id 'org.kordamp.gradle.integration-test' version '0.23.0'
+    //id 'org.kordamp.gradle.functional-test'  version '0.23.0'
+    id 'org.codehaus.griffon.griffon'        version '2.15.1'
+}
+
+config {
+    release = (rootProject.findProperty('release') ?: false).toBoolean()
+
+    info {
+        name          = 'GroovyConsoleFX'
+        description   = 'GroovyConsole in JavaFX'
+        vendor        = 'Kordamp'
+        inceptionYear = '2018'
+        tags          = ['groovy', 'javafx']
+
+        links {
+            website      = "https://github.com/aalmiray/${project.name}"
+            issueTracker = "https://github.com/aalmiray/${project.name}/issues"
+            scm          = "https://github.com/aalmiray/${project.name}.git"
+        }
+
+        specification  { enabled = false }
+
+        implementation { enabled = false }
+
+        publishing { enabled = false }
+
+        people {
+            person {
+                id    = 'aalmiray'
+                name  = 'Andres Almiray'
+                roles = ['developer']
+            }
+        }
     }
 
-    dependencies {
-        classpath 'org.codehaus.griffon:gradle-griffon-plugin:2.15.0'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-        classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.2'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
-        classpath 'net.nemerosa:versioning:2.7.1'
+    licensing {
+        licenses {
+            license {
+                id = 'Apache-2.0'
+            }
+        }
+    }
+
+    stats {
+        paths   = [
+            model:      [name: 'Models',      path: 'griffon-app/models'],
+            view:       [name: 'Views',       path: 'griffon-app/views'],
+            controller: [name: 'Controllers', path: 'griffon-app/controllers'],
+            service:    [name: 'Services',    path: 'griffon-app/services'],
+            config:     [name: 'Config',      path: 'griffon-app/conf'],
+            lifecycle:  [name: 'Lifecycle',   path: 'griffon-app/lifecycle'],
+            mvc:        [name: 'MVCs',        path: 'griffon-app/mvcs']
+        ]
     }
 }
 
-apply plugin: 'groovy'
-apply plugin: 'org.codehaus.griffon.griffon'
-apply plugin: 'net.nemerosa.versioning'
-
-Date buildTimeAndDate = new Date()
-ext {
-    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-    macosx = System.getProperty('os.name').contains('Mac OS')
+normalization {
+    runtimeClasspath {
+        ignore('/META-INF/MANIFEST.MF')
+    }
 }
 
 griffon {
     disableDependencyResolution = false
-    includeGroovyDependencies = true
-    version = griffonVersion
-    toolkit = 'javafx'
-    applicationProperties = [
-        'build_date'    : buildDate,
-        'build_time'    : buildTime,
-        'build_revision': versioning.info.commit
-    ]
+    includeGroovyDependencies   = true
+    version                     = griffonVersion
+    toolkit                     = 'javafx'
+}
+
+afterEvaluate {
+    project.griffon.applicationProperties['build_date'] = project.extensions.findByName('effectiveConfig').buildInfo.buildDate
+    project.griffon.applicationProperties['build_time'] = project.extensions.findByName('effectiveConfig').buildInfo.buildTime
+    project.griffon.applicationProperties['build_revision'] = project.extensions.findByName('effectiveConfig').buildInfo.buildRevision
 }
 
 mainClassName = 'org.kordamp.groovy.console.Launcher'
 
-apply from: 'gradle/publishing.gradle'
-apply from: 'gradle/code-coverage.gradle'
-apply from: 'gradle/code-quality.gradle'
 apply from: 'gradle/javafx-plugin.gradle'
-apply from: 'gradle/docs.gradle'
-apply plugin: 'org.kordamp.gradle.stats'
-apply plugin: 'com.github.ben-manes.versions'
 
 jfx {
     mainClass         = mainClassName
@@ -83,19 +136,13 @@ dependencies {
     testCompile("org.awaitility:awaitility-groovy:$awaitilityVersion") {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
+
+    //functionalTestCompile 'junit:junit:4.12'
+    //functionalTestCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    //functionalTestCompile "org.spockframework:spock-core:${spockVersion}"
 }
 
 sourceSets.main.groovy.srcDirs += ['griffon-app/mvcs']
-tasks.findByName('stats').paths += [
-    mvc: [name: 'MVCs', path: 'griffon-app/mvcs']
-]
-
-task sourceJar(type: Jar) {
-    group 'Build'
-    description 'An archive of the source code'
-    classifier 'sources'
-    from sourceSets.main.allSource
-}
 
 tasks.withType(JavaCompile) {
     sourceCompatibility = project.sourceCompatibility
@@ -106,9 +153,7 @@ tasks.withType(GroovyCompile) {
     sourceCompatibility = project.sourceCompatibility
     targetCompatibility = project.targetCompatibility
 }
-
-import java.text.SimpleDateFormat
-
+/*
 startScripts {
     doLast {
         if (!macosx) unixScript.text = unixScript.text.replaceAll('"(-Xdock:(name|icon)=)([^"]*?)(")', ' ')
@@ -121,3 +166,4 @@ if (hasProperty('debugRun') && ((project.debugRun as boolean))) {
         jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
     }
 }
+*/
