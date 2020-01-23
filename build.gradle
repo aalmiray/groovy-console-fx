@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 plugins {
+    id 'java-library'
     id 'groovy'
-    id 'org.kordamp.gradle.project'          version '0.23.0'
-    //id 'org.kordamp.gradle.integration-test' version '0.23.0'
-    //id 'org.kordamp.gradle.functional-test'  version '0.23.0'
-    id 'org.codehaus.griffon.griffon'        version '2.15.1'
+    id 'org.kordamp.gradle.kordamp-parentpom'
+    id 'org.codehaus.griffon.griffon'
 }
 
 config {
@@ -29,37 +28,14 @@ config {
     info {
         name          = 'GroovyConsoleFX'
         description   = 'GroovyConsole in JavaFX'
-        vendor        = 'Kordamp'
         inceptionYear = '2018'
         tags          = ['groovy', 'javafx']
-
-        links {
-            website      = "https://github.com/aalmiray/${project.name}"
-            issueTracker = "https://github.com/aalmiray/${project.name}/issues"
-            scm          = "https://github.com/aalmiray/${project.name}.git"
-        }
 
         specification  { enabled = false }
 
         implementation { enabled = false }
 
         publishing { enabled = false }
-
-        people {
-            person {
-                id    = 'aalmiray'
-                name  = 'Andres Almiray'
-                roles = ['developer']
-            }
-        }
-    }
-
-    licensing {
-        licenses {
-            license {
-                id = 'Apache-2.0'
-            }
-        }
     }
 
     stats {
@@ -72,12 +48,6 @@ config {
             lifecycle:  [name: 'Lifecycle',   path: 'griffon-app/lifecycle'],
             mvc:        [name: 'MVCs',        path: 'griffon-app/mvcs']
         ]
-    }
-}
-
-normalization {
-    runtimeClasspath {
-        ignore('/META-INF/MANIFEST.MF')
     }
 }
 
@@ -96,44 +66,32 @@ afterEvaluate {
 
 mainClassName = 'org.kordamp.groovy.console.Launcher'
 
-apply from: 'gradle/javafx-plugin.gradle'
-
-jfx {
-    mainClass         = mainClassName
-    allPermissions    = true
-    keyStoreAlias     = 'example-user'
-    keyStorePassword  = 'example-password'
-    jfxMainAppJarName = jar.archiveName
-    appName           = project.name
-    vendor            = project.name
-}
-
 dependencies {
     griffon "org.codehaus.griffon.plugins:griffon-miglayout-plugin:$miglayoutPluginVersion"
 
-    compile "org.codehaus.griffon:griffon-guice:$griffonVersion"
+    api "org.codehaus.griffon:griffon-guice:$griffonVersion"
 
-    compile "com.miglayout:miglayout-javafx:$miglayoutVersion"
-    compile "org.kordamp.bootstrapfx:bootstrapfx-core:$bootstrapfxVersion"
-    compile "org.kordamp.ikonli:ikonli-javafx:$ikonliVersion"
-    compile "org.kordamp.ikonli:ikonli-materialdesign-pack:$ikonliVersion"
+    api "com.miglayout:miglayout-javafx:$miglayoutVersion"
+    api "org.kordamp.bootstrapfx:bootstrapfx-core:$bootstrapfxVersion"
+    api "org.kordamp.ikonli:ikonli-javafx:$ikonliVersion"
+    api "org.kordamp.ikonli:ikonli-materialdesign-pack:$ikonliVersion"
 
-    compile("org.fxmisc.richtext:richtextfx:$richtextfxVersion") {
+    api("org.fxmisc.richtext:richtextfx:$richtextfxVersion") {
         exclude group: 'org.reactfx', module: 'reactfx'
     }
-    compile("org.fxmisc.undo:undofx:$undofxVersion") {
+    api("org.fxmisc.undo:undofx:$undofxVersion") {
         exclude group: 'org.reactfx', module: 'reactfx'
     }
-    compile "org.fxmisc.flowless:flowless:$flowlessVersion"
-    compile "org.fxmisc.wellbehaved:wellbehavedfx:$wellbehavedfxVersion"
-    compile "de.codecentric.centerdevice:centerdevice-nsmenufx:$nsmenufxVersion"
+    api "org.fxmisc.flowless:flowless:$flowlessVersion"
+    api "org.fxmisc.wellbehaved:wellbehavedfx:$wellbehavedfxVersion"
+    api "de.codecentric.centerdevice:centerdevice-nsmenufx:$nsmenufxVersion"
 
-    runtime "org.slf4j:slf4j-simple:$slf4jVersion"
+    runtimeOnly "org.slf4j:slf4j-simple:$slf4jVersion"
 
-    testCompile "org.codehaus.griffon:griffon-javafx-test:$griffonVersion"
-    testCompile "org.codehaus.groovy:groovy-all:$groovyVersion"
-    testCompile "org.spockframework:spock-core:$spockVersion"
-    testCompile("org.awaitility:awaitility-groovy:$awaitilityVersion") {
+    testImplementation "org.codehaus.griffon:griffon-javafx-test:$griffonVersion"
+    testImplementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+    testImplementation "org.spockframework:spock-core:$spockVersion"
+    testImplementation("org.awaitility:awaitility-groovy:$awaitilityVersion") {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
 
@@ -144,26 +102,22 @@ dependencies {
 
 sourceSets.main.groovy.srcDirs += ['griffon-app/mvcs']
 
-tasks.withType(JavaCompile) {
-    sourceCompatibility = project.sourceCompatibility
-    targetCompatibility = project.targetCompatibility
+configurations.all {
+    resolutionStrategy.force "com.miglayout:miglayout-javafx:$miglayoutVersion",
+        "com.miglayout:miglayout-core:$miglayoutVersion",
+        "org.fxmisc.flowless:flowless:$flowlessVersion",
+        "org.codehaus.griffon:griffon-javafx-groovy:$griffonVersion",
+        "com.google.guava:guava:28.2-jre",
+        "com.google.code.findbugs:jsr305:3.0.2",
+        "org.codehaus.groovy:groovy-all:$groovyVersion",
+        "org.codehaus.groovy:groovy:$groovyVersion",
+        "org.codehaus.groovy:groovy-json:$groovyVersion",
+        "org.codehaus.groovy:groovy-macro:$groovyVersion",
+        "org.codehaus.groovy:groovy-nio:$groovyVersion",
+        "org.codehaus.groovy:groovy-sql:$groovyVersion",
+        "org.codehaus.groovy:groovy-templates:$groovyVersion",
+        "org.codehaus.groovy:groovy-test:$groovyVersion",
+        "org.codehaus.groovy:groovy-xml:$groovyVersion",
+        "org.awaitility:awaitility:$awaitilityVersion",
+        "org.slf4j:slf4j-api:$slf4jVersion"
 }
-
-tasks.withType(GroovyCompile) {
-    sourceCompatibility = project.sourceCompatibility
-    targetCompatibility = project.targetCompatibility
-}
-/*
-startScripts {
-    doLast {
-        if (!macosx) unixScript.text = unixScript.text.replaceAll('"(-Xdock:(name|icon)=)([^"]*?)(")', ' ')
-        windowsScript.text = windowsScript.text.replaceAll('"(-Xdock:(name|icon)=)([^"]*?)(")', ' ')
-    }
-}
-
-if (hasProperty('debugRun') && ((project.debugRun as boolean))) {
-    run {
-        jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
-    }
-}
-*/

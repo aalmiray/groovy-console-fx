@@ -20,6 +20,11 @@ pluginManagement {
         jcenter()
         gradlePluginPortal()
     }
+    plugins {
+        id 'org.kordamp.gradle.kordamp-parentpom' version kordampPomVersion
+        id 'org.codehaus.griffon.griffon'         version griffonVersion
+        //id 'com.google.osdetector'                version osPluginVersion
+    }
 }
 
 rootProject.name = 'groovy-console-fx'
